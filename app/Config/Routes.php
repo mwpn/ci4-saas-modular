@@ -13,8 +13,8 @@ $routes->get('home', 'Home::index');
 $routes->get('dashboard', 'DashboardController::index', ['filter' => 'auth']);
 $routes->get('login', 'LoginController::index');
 $routes->post('login', 'Modules\Auth\Presentation\Controllers\AuthController::attemptLogin');
-$routes->get('register', 'Modules\Auth\Presentation\Controllers\AuthController::register');
-$routes->post('register', 'Modules\Auth\Presentation\Controllers\AuthController::attemptRegister');
+$routes->get('register', 'RegisterController::index');
+$routes->post('register', 'RegisterController::attemptRegister');
 
 // API Routes
 $routes->group('api', function ($routes) {

@@ -67,7 +67,7 @@ class AuthController extends BaseController
             return redirect()->to('/dashboard');
         }
 
-        return view('Modules\Auth\Presentation\Views\auth\register');
+        return view('register');
     }
 
     public function attemptRegister(): ResponseInterface
@@ -76,15 +76,14 @@ class AuthController extends BaseController
             'name' => 'required|min_length[3]|max_length[100]',
             'email' => 'required|valid_email',
             'password' => 'required|min_length[8]',
-            'password_confirm' => 'required|matches[password]'
+            'password_confirmation' => 'required|matches[password]'
         ];
 
         if (!$this->validate($rules)) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $this->validator->getErrors()
-            ]);
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors())
+                ->with('error', 'Validasi gagal');
         }
 
         $userData = [
@@ -101,17 +100,13 @@ class AuthController extends BaseController
             // Auto login after registration
             $this->authService->login($userData['email'], $userData['password']);
 
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => $result['message'],
-                'redirect' => '/dashboard'
-            ]);
+            return redirect()->to('/dashboard')
+                ->with('success', 'Registrasi berhasil! Selamat datang!');
         }
 
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => $result['message']
-        ]);
+        return redirect()->back()
+            ->withInput()
+            ->with('error', $result['message']);
     }
 
     public function logout(): ResponseInterface
