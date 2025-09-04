@@ -66,7 +66,7 @@ class MakeModule extends BaseCommand
     public function run(array $params)
     {
         $moduleName = $params[0] ?? null;
-        
+
         if (empty($moduleName)) {
             CLI::error('Module name is required!');
             CLI::write('Usage: php spark make:module <ModuleName>');
@@ -75,7 +75,7 @@ class MakeModule extends BaseCommand
 
         $moduleName = ucfirst($moduleName);
         $modulePath = FCPATH . '../modules/' . $moduleName;
-        
+
         if (is_dir($modulePath) && !CLI::getOption('force')) {
             CLI::error("Module '{$moduleName}' already exists!");
             CLI::write('Use --force to overwrite existing files.');
