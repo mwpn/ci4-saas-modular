@@ -1,39 +1,62 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="font-outfit">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Akun - CI4 Modular SaaS</title>
+    <title>Register - CI4 SaaS Template</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'outfit': ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
         }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-    </style>
+    </script>
+    <link rel="stylesheet" href="<?= base_url('assets/css/landing.css') ?>">
 </head>
-<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-        <!-- Logo dan Header -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4">
-                <i class="fas fa-rocket text-2xl text-indigo-600"></i>
+
+<body class="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="flex justify-center mb-6">
+                <div class="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
             </div>
-            <h1 class="text-3xl font-bold text-white mb-2">Daftar Akun</h1>
-            <p class="text-white/80">Buat akun baru untuk mengakses platform</p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+            <p class="text-gray-600">Sign up for your CI4 SaaS account</p>
         </div>
 
-        <!-- Form Register -->
-        <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+        <!-- Register Form -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
             <?php if (session()->getFlashdata('error')): ?>
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
                     <div class="flex items-center">
-                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
                         <span><?= session()->getFlashdata('error') ?></span>
                     </div>
                 </div>
@@ -42,153 +65,140 @@
             <?php if (session()->getFlashdata('success')): ?>
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
                     <div class="flex items-center">
-                        <i class="fas fa-check-circle mr-2"></i>
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
                         <span><?= session()->getFlashdata('success') ?></span>
                     </div>
                 </div>
             <?php endif; ?>
 
-            <form action="<?= base_url('register') ?>" method="POST" class="space-y-6">
+            <form class="space-y-6" action="<?= base_url('register') ?>" method="POST">
                 <?= csrf_field() ?>
                 
-                <!-- Nama Lengkap -->
+                <!-- Full Name -->
                 <div>
-                    <label for="name" class="block text-sm font-medium text-white mb-2">
-                        <i class="fas fa-user mr-2"></i>Nama Lengkap
+                    <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Full Name
                     </label>
-                    <input type="text" 
-                           id="name" 
-                           name="name" 
-                           value="<?= old('name') ?>"
-                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                           placeholder="Masukkan nama lengkap"
-                           required>
+                    <input id="name" name="name" type="text" required
+                        value="<?= old('name') ?>"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                        placeholder="Enter your full name">
                     <?php if (session()->getFlashdata('errors')['name'] ?? false): ?>
-                        <p class="text-red-400 text-sm mt-1"><?= session()->getFlashdata('errors')['name'] ?></p>
+                        <p class="text-red-500 text-sm mt-1"><?= session()->getFlashdata('errors')['name'] ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Email -->
                 <div>
-                    <label for="email" class="block text-sm font-medium text-white mb-2">
-                        <i class="fas fa-envelope mr-2"></i>Email
+                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Email Address
                     </label>
-                    <input type="email" 
-                           id="email" 
-                           name="email" 
-                           value="<?= old('email') ?>"
-                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                           placeholder="Masukkan email"
-                           required>
+                    <input id="email" name="email" type="email" required
+                        value="<?= old('email') ?>"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                        placeholder="Enter your email">
                     <?php if (session()->getFlashdata('errors')['email'] ?? false): ?>
-                        <p class="text-red-400 text-sm mt-1"><?= session()->getFlashdata('errors')['email'] ?></p>
+                        <p class="text-red-500 text-sm mt-1"><?= session()->getFlashdata('errors')['email'] ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Password -->
                 <div>
-                    <label for="password" class="block text-sm font-medium text-white mb-2">
-                        <i class="fas fa-lock mr-2"></i>Password
+                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Password
                     </label>
-                    <div class="relative">
-                        <input type="password" 
-                               id="password" 
-                               name="password" 
-                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 pr-12"
-                               placeholder="Masukkan password"
-                               required>
-                        <button type="button" 
-                                onclick="togglePassword('password')"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-eye" id="password-eye"></i>
-                        </button>
-                    </div>
+                    <input id="password" name="password" type="password" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                        placeholder="Enter your password">
                     <?php if (session()->getFlashdata('errors')['password'] ?? false): ?>
-                        <p class="text-red-400 text-sm mt-1"><?= session()->getFlashdata('errors')['password'] ?></p>
+                        <p class="text-red-500 text-sm mt-1"><?= session()->getFlashdata('errors')['password'] ?></p>
                     <?php endif; ?>
                 </div>
 
-                <!-- Konfirmasi Password -->
+                <!-- Confirm Password -->
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-white mb-2">
-                        <i class="fas fa-lock mr-2"></i>Konfirmasi Password
+                    <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Confirm Password
                     </label>
-                    <div class="relative">
-                        <input type="password" 
-                               id="password_confirmation" 
-                               name="password_confirmation" 
-                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 pr-12"
-                               placeholder="Konfirmasi password"
-                               required>
-                        <button type="button" 
-                                onclick="togglePassword('password_confirmation')"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-eye" id="password_confirmation-eye"></i>
-                        </button>
-                    </div>
+                    <input id="password_confirmation" name="password_confirmation" type="password" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                        placeholder="Confirm your password">
                     <?php if (session()->getFlashdata('errors')['password_confirmation'] ?? false): ?>
-                        <p class="text-red-400 text-sm mt-1"><?= session()->getFlashdata('errors')['password_confirmation'] ?></p>
+                        <p class="text-red-500 text-sm mt-1"><?= session()->getFlashdata('errors')['password_confirmation'] ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Terms & Conditions -->
                 <div class="flex items-start">
-                    <input type="checkbox" 
-                           id="terms" 
-                           name="terms" 
-                           class="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                           required>
-                    <label for="terms" class="ml-2 text-sm text-white">
-                        Saya menyetujui 
-                        <a href="#" class="text-indigo-300 hover:text-indigo-200 underline">Syarat dan Ketentuan</a>
-                        dan 
-                        <a href="#" class="text-indigo-300 hover:text-indigo-200 underline">Kebijakan Privasi</a>
+                    <input id="terms" name="terms" type="checkbox" required
+                        class="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                    <label for="terms" class="ml-2 block text-sm text-gray-700">
+                        I agree to the 
+                        <a href="#" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">Terms of Service</a>
+                        and 
+                        <a href="#" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">Privacy Policy</a>
                     </label>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" 
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    <i class="fas fa-user-plus mr-2"></i>
-                    Daftar Akun
+                <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                    Create Account
                 </button>
             </form>
 
-            <!-- Login Link -->
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button type="button"
+                        class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                            <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                            <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                            <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                        </svg>
+                        <span class="ml-2">Google</span>
+                    </button>
+
+                    <button type="button"
+                        class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                        <span class="ml-2">Facebook</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="mt-6 text-center">
-                <p class="text-white/80">
-                    Sudah punya akun? 
-                    <a href="<?= base_url('login') ?>" class="text-indigo-300 hover:text-indigo-200 font-semibold underline">
-                        Masuk di sini
+                <p class="text-sm text-gray-600">
+                    Already have an account?
+                    <a href="<?= base_url('login') ?>" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">
+                        Sign in here
                     </a>
                 </p>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="text-center mt-8">
-            <p class="text-white/60 text-sm">
-                © 2024 CI4 Modular SaaS. All rights reserved.
-            </p>
+        <!-- Back to Home -->
+        <div class="text-center">
+            <a href="<?= base_url('/') ?>" class="text-sm text-gray-500 hover:text-primary-600 transition-colors">
+                ← Back to Home
+            </a>
         </div>
     </div>
 
     <script>
-        function togglePassword(fieldId) {
-            const field = document.getElementById(fieldId);
-            const eye = document.getElementById(fieldId + '-eye');
-            
-            if (field.type === 'password') {
-                field.type = 'text';
-                eye.classList.remove('fa-eye');
-                eye.classList.add('fa-eye-slash');
-            } else {
-                field.type = 'password';
-                eye.classList.remove('fa-eye-slash');
-                eye.classList.add('fa-eye');
-            }
-        }
-
         // Form validation
         document.querySelector('form').addEventListener('submit', function(e) {
             const password = document.getElementById('password').value;
@@ -196,16 +206,17 @@
             
             if (password !== confirmPassword) {
                 e.preventDefault();
-                alert('Password dan konfirmasi password tidak sama!');
+                alert('Password and confirm password do not match!');
                 return false;
             }
             
             if (password.length < 8) {
                 e.preventDefault();
-                alert('Password minimal 8 karakter!');
+                alert('Password must be at least 8 characters!');
                 return false;
             }
         });
     </script>
 </body>
+
 </html>
