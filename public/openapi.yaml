@@ -1,0 +1,450 @@
+openapi: 3.0.3
+info:
+  title: CI4 Modular SaaS API
+  description: |
+    API Documentation untuk CI4 Modular SaaS Template dengan Multi-tenancy Support.
+    
+    ## Fitur Utama
+    - Multi-tenant architecture dengan isolasi data
+    - Authentication & Authorization
+    - Role-based access control
+    - Modular design pattern
+    - RESTful API endpoints
+    
+    ## Authentication
+    API menggunakan Bearer Token authentication. Dapatkan token melalui endpoint `/api/auth/login`.
+    
+    ## Multi-tenancy
+    Semua endpoint otomatis terisolasi berdasarkan tenant yang sedang aktif.
+  version: 1.0.0
+  contact:
+    name: CI4 Modular SaaS Team
+    email: support@ci4saas.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+  - url: https://api.ci4saas.com
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/health:
+    get:
+      tags:
+        - System
+      summary: Health Check
+      description: Endpoint untuk mengecek status kesehatan API
+      security: []
+      responses:
+        '200':
+          description: API berjalan dengan baik
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  tenant:
+                    type: string
+                    example: "demo-tenant"
+
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User Login
+      description: Login user dan mendapatkan access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        '200':
+          description: Login berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Login berhasil"
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                      user:
+                        $ref: '#/components/schemas/User'
+        '401':
+          description: Kredensial tidak valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: User Registration
+      description: Registrasi user baru
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - password_confirmation
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+                email:
+                  type: string
+                  format: email
+                  example: "john@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+                password_confirmation:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        '201':
+          description: Registrasi berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "User berhasil didaftarkan"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '422':
+          description: Validasi gagal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Get All Users
+      description: Mendapatkan daftar semua users dalam tenant
+      responses:
+        '200':
+          description: Daftar users berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/dashboard/stats:
+    get:
+      tags:
+        - Dashboard
+      summary: Dashboard Statistics
+      description: Mendapatkan statistik dashboard untuk tenant
+      responses:
+        '200':
+          description: Statistik berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      total_users:
+                        type: integer
+                        example: 150
+                      active_users:
+                        type: integer
+                        example: 120
+                      total_tenants:
+                        type: integer
+                        example: 25
+                      revenue:
+                        type: number
+                        format: float
+                        example: 125000.50
+                      growth_rate:
+                        type: number
+                        format: float
+                        example: 15.5
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tenants:
+    get:
+      tags:
+        - Tenants
+      summary: Get All Tenants
+      description: Mendapatkan daftar semua tenants (admin only)
+      responses:
+        '200':
+          description: Daftar tenants berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tenant'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tenants/{id}:
+    get:
+      tags:
+        - Tenants
+      summary: Get Tenant by ID
+      description: Mendapatkan detail tenant berdasarkan ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tenant ID
+      responses:
+        '200':
+          description: Detail tenant berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: '#/components/schemas/Tenant'
+        '404':
+          description: Tenant tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        role:
+          type: string
+          example: "admin"
+        tenant_id:
+          type: integer
+          example: 1
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Tenant:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Demo Company"
+        slug:
+          type: string
+          example: "demo-company"
+        domain:
+          type: string
+          example: "demo.company.com"
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+          example: "active"
+        settings:
+          type: object
+          example:
+            theme: "light"
+            language: "id"
+            timezone: "Asia/Jakarta"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Pagination:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 15
+        total:
+          type: integer
+          example: 100
+        last_page:
+          type: integer
+          example: 7
+        from:
+          type: integer
+          example: 1
+        to:
+          type: integer
+          example: 15
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Terjadi kesalahan"
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+    ValidationError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Validasi gagal"
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+tags:
+  - name: System
+    description: System health dan monitoring
+  - name: Authentication
+    description: Login, register, dan manajemen user
+  - name: Users
+    description: Manajemen users dalam tenant
+  - name: Dashboard
+    description: Dashboard dan statistik
+  - name: Tenants
+    description: Manajemen tenants (admin only)

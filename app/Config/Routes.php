@@ -20,12 +20,23 @@ $routes->post('register', 'Modules\Auth\Presentation\Controllers\AuthController:
 $routes->group('api', function ($routes) {
     $routes->get('health', 'ApiController::health');
     $routes->post('auth/login', 'ApiController::login');
+    $routes->post('auth/register', 'ApiController::register');
     $routes->get('users', 'ApiController::users', ['filter' => 'auth']);
     $routes->get('dashboard/stats', 'ApiController::dashboardStats', ['filter' => 'auth']);
+    $routes->get('tenants', 'ApiController::tenants', ['filter' => 'auth']);
+    $routes->get('tenants/(:num)', 'ApiController::getTenant/$1', ['filter' => 'auth']);
 });
 
 // API Documentation
 $routes->get('api-docs', function () {
+    return redirect()->to('swagger-ui/index.html');
+});
+
+$routes->get('api/docs', function () {
+    return redirect()->to('swagger-ui/index.html');
+});
+
+$routes->get('swagger-ui', function () {
     return redirect()->to('swagger-ui/index.html');
 });
 

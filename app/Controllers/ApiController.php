@@ -240,4 +240,174 @@ class ApiController extends ResourceController
             'data' => $stats
         ]);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/auth/register",
+     *     summary="User registration",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *             @OA\Property(property="password", type="string", example="password123"),
+     *             @OA\Property(property="password_confirmation", type="string", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Registration successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="User registered successfully"),
+     *             @OA\Property(property="data", ref="#/components/schemas/User")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation failed",
+     *         @OA\JsonContent(ref="#/components/schemas/Error")
+     *     )
+     * )
+     */
+    public function register(): ResponseInterface
+    {
+        $rules = [
+            'name' => 'required|min_length[3]',
+            'email' => 'required|valid_email|is_unique[users.email]',
+            'password' => 'required|min_length[8]',
+            'password_confirmation' => 'required|matches[password]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->respond([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $this->validator->getErrors()
+            ], 422);
+        }
+
+        $data = $this->request->getJSON(true);
+        $result = $this->authService->register($data);
+
+        if ($result['success']) {
+            return $this->respond([
+                'success' => true,
+                'message' => 'User registered successfully',
+                'data' => $result['user']
+            ], 201);
+        }
+
+        return $this->respond([
+            'success' => false,
+            'message' => $result['message']
+        ], 400);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/tenants",
+     *     summary="Get all tenants",
+     *     tags={"Tenants"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of tenants",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Tenant"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(ref="#/components/schemas/Error")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Admin access required",
+     *         @OA\JsonContent(ref="#/components/schemas/Error")
+     *     )
+     * )
+     */
+    public function tenants(): ResponseInterface
+    {
+        if (!$this->authService->isLoggedIn()) {
+            return $this->respond([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        // Check if user is admin
+        $user = $this->authService->getCurrentUser();
+        if ($user['role'] !== 'admin') {
+            return $this->respond([
+                'success' => false,
+                'message' => 'Admin access required'
+            ], 403);
+        }
+
+        $tenantModel = new \Modules\Core\Infrastructure\Models\TenantModel();
+        $tenants = $tenantModel->findAll();
+
+        return $this->respond([
+            'success' => true,
+            'data' => $tenants
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/tenants/{id}",
+     *     summary="Get tenant by ID",
+     *     tags={"Tenants"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer"),
+     *         description="Tenant ID"
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Tenant details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", ref="#/components/schemas/Tenant")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Tenant not found",
+     *         @OA\JsonContent(ref="#/components/schemas/Error")
+     *     )
+     * )
+     */
+    public function getTenant($id = null): ResponseInterface
+    {
+        if (!$this->authService->isLoggedIn()) {
+            return $this->respond([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        $tenantModel = new \Modules\Core\Infrastructure\Models\TenantModel();
+        $tenant = $tenantModel->find($id);
+
+        if (!$tenant) {
+            return $this->respond([
+                'success' => false,
+                'message' => 'Tenant not found'
+            ], 404);
+        }
+
+        return $this->respond([
+            'success' => true,
+            'data' => $tenant
+        ]);
+    }
 }
