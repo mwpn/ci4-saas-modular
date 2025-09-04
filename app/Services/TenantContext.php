@@ -29,6 +29,24 @@ class TenantContext
     }
 
     /**
+     * Set tenant ID directly
+     */
+    public static function setTenantId(string $tenantId): void
+    {
+        self::$tenantId = $tenantId;
+        session()->set('tenant_id', $tenantId);
+    }
+
+    /**
+     * Set tenant settings
+     */
+    public static function setSettings(array $settings): void
+    {
+        self::$settings = $settings;
+        session()->set('tenant_settings', $settings);
+    }
+
+    /**
      * Get current tenant
      */
     public static function getTenant(): ?object

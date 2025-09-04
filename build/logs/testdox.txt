@@ -1,3 +1,5 @@
-Api (Tests\Feature\Api)
+Health (Tests\Feature\Health)
  [x] Health endpoint
+ [x] Api response format
+ [x] Swagger documentation access
 

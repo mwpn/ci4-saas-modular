@@ -99,8 +99,9 @@ class ApiController extends ResourceController
             ], 400);
         }
 
-        $email = $this->request->getJSON(true)['email'];
-        $password = $this->request->getJSON(true)['password'];
+        $data = $this->request->getJSON(true);
+        $email = $data['email'] ?? '';
+        $password = $data['password'] ?? '';
 
         $result = $this->authService->login($email, $password);
 

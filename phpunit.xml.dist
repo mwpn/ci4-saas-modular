@@ -35,6 +35,10 @@
         <testsuite name="database">
             <directory>./tests/database</directory>
         </testsuite>
+        <testsuite name="basic">
+            <file>./tests/unit/BasicTest.php</file>
+            <file>./tests/unit/SimpleTest.php</file>
+        </testsuite>
         <testsuite name="all">
             <directory>./tests</directory>
         </testsuite>
