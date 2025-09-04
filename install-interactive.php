@@ -110,6 +110,43 @@ if (file_exists('spark')) {
     echo "⚠️  File spark tidak ditemukan. Silakan jalankan: php spark key:generate\n";
 }
 
+// Function to create database if not exists
+function createDatabaseIfNotExists($host, $username, $password, $database) {
+    try {
+        // Try mysqli first
+        $connection = @mysqli_connect($host, $username, $password);
+        
+        if ($connection) {
+            // Check if database exists
+            $result = mysqli_query($connection, "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$database'");
+            
+            if (mysqli_num_rows($result) > 0) {
+                echo "✅ Database '$database' already exists\n";
+                mysqli_close($connection);
+                return true;
+            } else {
+                // Create database
+                $createQuery = "CREATE DATABASE IF NOT EXISTS `$database` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+                if (mysqli_query($connection, $createQuery)) {
+                    echo "✅ Database '$database' created successfully\n";
+                    mysqli_close($connection);
+                    return true;
+                } else {
+                    echo "❌ Failed to create database: " . mysqli_error($connection) . "\n";
+                    mysqli_close($connection);
+                    return false;
+                }
+            }
+        } else {
+            echo "❌ Failed to connect to MySQL server: " . mysqli_connect_error() . "\n";
+            return false;
+        }
+    } catch (Exception $e) {
+        echo "❌ Database creation error: " . $e->getMessage() . "\n";
+        return false;
+    }
+}
+
 // Database configuration
 echo "\n🗄️  Database Configuration:\n";
 $dbHost = getUserInput("Database host", "localhost");
@@ -126,6 +163,22 @@ $envContent = preg_replace('/database\.default\.password = .*/', "database.defau
 file_put_contents('.env', $envContent);
 
 echo "✅ Database configuration updated.\n";
+
+// Auto-create database if not exists
+echo "\n🤔 Auto-create database if not exists? (y/n): ";
+$autoCreateDb = trim(fgets(STDIN));
+
+if (strtolower($autoCreateDb) === 'y' || strtolower($autoCreateDb) === 'yes') {
+    echo "🔄 Creating database if not exists...\n";
+    $dbCreated = createDatabaseIfNotExists($dbHost, $dbUser, $dbPass, $dbName);
+    
+    if (!$dbCreated) {
+        echo "⚠️  Database creation failed. Please create database manually.\n";
+        echo "   SQL: CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\n\n";
+    }
+} else {
+    echo "ℹ️  Skipping database creation. Please ensure database '$dbName' exists.\n";
+}
 
 // Create writable directories
 $writableDirs = [
@@ -192,7 +245,7 @@ if ($autoSeed) {
 echo "\n🎉 Installation completed!\n\n";
 
 echo "📋 Next steps:\n";
-echo "1. Database sudah dikonfigurasi\n";
+echo "1. Database sudah dikonfigurasi dan dibuat (jika dipilih)\n";
 if (!$autoMigrate) {
     echo "2. Jalankan migrasi: php spark migrate\n";
 }

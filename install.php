@@ -92,12 +92,81 @@ if (file_exists('spark')) {
     echo "⚠️  File spark tidak ditemukan. Silakan jalankan: php spark key:generate\n";
 }
 
-// Check if database is configured
+// Function to create database if not exists
+function createDatabaseIfNotExists($host, $username, $password, $database) {
+    try {
+        // Try mysqli first
+        $connection = @mysqli_connect($host, $username, $password);
+        
+        if ($connection) {
+            // Check if database exists
+            $result = mysqli_query($connection, "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$database'");
+            
+            if (mysqli_num_rows($result) > 0) {
+                echo "✅ Database '$database' already exists\n";
+                mysqli_close($connection);
+                return true;
+            } else {
+                // Create database
+                $createQuery = "CREATE DATABASE IF NOT EXISTS `$database` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+                if (mysqli_query($connection, $createQuery)) {
+                    echo "✅ Database '$database' created successfully\n";
+                    mysqli_close($connection);
+                    return true;
+                } else {
+                    echo "❌ Failed to create database: " . mysqli_error($connection) . "\n";
+                    mysqli_close($connection);
+                    return false;
+                }
+            }
+        } else {
+            echo "❌ Failed to connect to MySQL server: " . mysqli_connect_error() . "\n";
+            return false;
+        }
+    } catch (Exception $e) {
+        echo "❌ Database creation error: " . $e->getMessage() . "\n";
+        return false;
+    }
+}
+
+// Check if database is configured and create if needed
 echo "\n🗄️  Checking database configuration...\n";
 $envFile = file_get_contents('.env');
-if (strpos($envFile, 'database.default.database = ci4_saas') !== false) {
-    echo "⚠️  Database masih menggunakan konfigurasi default.\n";
-    echo "   Silakan edit file .env untuk mengatur database yang sesuai.\n\n";
+
+// Extract database configuration from .env
+$dbHost = 'localhost';
+$dbName = 'ci4_saas';
+$dbUser = 'root';
+$dbPass = '';
+
+preg_match('/database\.default\.hostname = (.+)/', $envFile, $matches);
+if (!empty($matches[1])) $dbHost = trim($matches[1]);
+
+preg_match('/database\.default\.database = (.+)/', $envFile, $matches);
+if (!empty($matches[1])) $dbName = trim($matches[1]);
+
+preg_match('/database\.default\.username = (.+)/', $envFile, $matches);
+if (!empty($matches[1])) $dbUser = trim($matches[1]);
+
+preg_match('/database\.default\.password = (.+)/', $envFile, $matches);
+if (!empty($matches[1])) $dbPass = trim($matches[1]);
+
+echo "🔍 Database config: $dbUser@$dbHost/$dbName\n";
+
+// Ask if user wants to auto-create database
+echo "\n🤔 Auto-create database if not exists? (y/n): ";
+$autoCreateDb = trim(fgets(STDIN));
+
+if (strtolower($autoCreateDb) === 'y' || strtolower($autoCreateDb) === 'yes') {
+    echo "🔄 Creating database if not exists...\n";
+    $dbCreated = createDatabaseIfNotExists($dbHost, $dbUser, $dbPass, $dbName);
+    
+    if (!$dbCreated) {
+        echo "⚠️  Database creation failed. Please create database manually.\n";
+        echo "   SQL: CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\n\n";
+    }
+} else {
+    echo "ℹ️  Skipping database creation. Please ensure database '$dbName' exists.\n";
 }
 
 // Create writable directories if not exist
@@ -170,15 +239,14 @@ if (strtolower($autoSeed) === 'y' || strtolower($autoSeed) === 'yes') {
 echo "\n🎉 Installation completed!\n\n";
 
 echo "📋 Next steps:\n";
-echo "1. Edit file .env untuk konfigurasi database\n";
-echo "2. Buat database MySQL sesuai konfigurasi di .env\n";
+echo "1. Database sudah dikonfigurasi dan dibuat (jika dipilih)\n";
 if (strtolower($autoMigrate) !== 'y' && strtolower($autoMigrate) !== 'yes') {
-    echo "3. Jalankan migrasi: php spark migrate\n";
+    echo "2. Jalankan migrasi: php spark migrate\n";
 }
 if (strtolower($autoSeed) !== 'y' && strtolower($autoSeed) !== 'yes') {
-    echo "4. Jalankan seeder: php spark db:seed TenantSeeder\n";
+    echo "3. Jalankan seeder: php spark db:seed TenantSeeder\n";
 }
-echo "5. Akses aplikasi di browser: http://localhost:8080\n\n";
+echo "4. Akses aplikasi di browser: http://localhost:8080\n\n";
 
 echo "📚 Documentation: README.md\n";
 echo "🔧 Configuration: app/Config/SaaS.php\n";
