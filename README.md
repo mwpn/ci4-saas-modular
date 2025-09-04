@@ -209,7 +209,40 @@ public bool $enableIsolation = true;
 ### Membuat Module Baru
 
 ```bash
+# Basic module creation
 php spark make:module ModuleName
+
+# With additional features
+php spark make:module ModuleName --with-migration --with-seeder --with-tests --with-api --with-views
+
+# Force overwrite existing module
+php spark make:module ModuleName --force
+```
+
+**Options:**
+- `--with-migration` - Create migration files
+- `--with-seeder` - Create seeder files  
+- `--with-tests` - Create test files
+- `--with-api` - Create API controller and routes
+- `--with-views` - Create view files
+- `--force` - Force overwrite existing files
+
+**Generated Structure:**
+```
+modules/ModuleName/
+├── Application/Services/          # Business logic
+├── Domain/Entities/              # Domain entities
+├── Infrastructure/
+│   ├── Models/                   # Data models
+│   └── Repositories/             # Data repositories
+├── Presentation/
+│   ├── Controllers/              # HTTP controllers
+│   └── Views/                    # User interface
+├── Database/
+│   ├── Migrations/               # Database migrations
+│   └── Seeds/                    # Database seeders
+├── Providers/ServiceProvider.php # Module service provider
+└── Routes.php                    # Module routes
 ```
 
 ### Menjalankan Migrasi
