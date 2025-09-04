@@ -37,6 +37,9 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'tenant'        => TenantFilter::class,
         'tenant-isolation' => \App\Middleware\TenantIsolationMiddleware::class,
+        'auth'          => \App\Middleware\AuthMiddleware::class,
+        'role'          => \App\Middleware\RoleMiddleware::class,
+        'permission'    => \App\Middleware\PermissionMiddleware::class,
     ];
 
     /**

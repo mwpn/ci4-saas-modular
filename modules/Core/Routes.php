@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $routes->group('', ['namespace' => 'Modules\\Core\\Presentation\\Controllers'], function ($routes) {
     $routes->get('/', 'HomeController::index');

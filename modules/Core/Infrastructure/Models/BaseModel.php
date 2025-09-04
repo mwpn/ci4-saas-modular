@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace Modules\Core\Infrastructure\Models;
 

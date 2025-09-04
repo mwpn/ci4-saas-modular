@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+INSTALLER.md
+TENANT_ISOLATION.md
+*.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Cache
+cache/
+writable/cache/
+writable/logs/
+writable/session/
+writable/debugbar/
+
+# Dependencies
+node_modules/
+vendor/
+
+# Environment
+.env
+.env.*
+
+# Tests
+tests/
+phpunit.xml.dist
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Build artifacts
+builds/
