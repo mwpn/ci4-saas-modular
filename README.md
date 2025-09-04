@@ -258,8 +258,27 @@ Filter `TenantFilter` secara otomatis memvalidasi dan mengisolasi data berdasark
 
 ## 🧪 Testing
 
+### Run All Tests
 ```bash
-php spark test
+composer test
+```
+
+### Run Specific Test Suites
+```bash
+# Run feature tests
+composer test:feature
+
+# Run unit tests  
+composer test:unit
+
+# Run with coverage
+composer test:coverage
+```
+
+### Run Individual Tests
+```bash
+vendor/bin/phpunit tests/feature/ApiTest.php
+vendor/bin/phpunit tests/unit/AuthTest.php
 ```
 
 ## 📚 Dokumentasi

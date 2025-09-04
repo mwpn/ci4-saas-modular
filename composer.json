@@ -47,8 +47,11 @@
     },
   
     "scripts": {
-  "test": "phpunit"
-}
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite unit",
+        "test:feature": "phpunit --testsuite feature",
+        "test:coverage": "phpunit --coverage-html build/coverage"
+    }
 
   }
   

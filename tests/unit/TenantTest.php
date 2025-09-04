@@ -3,8 +3,8 @@
 namespace Tests\Unit;
 
 use CodeIgniter\Test\CIUnitTestCase;
-use Modules\Core\Services\TenantContext;
-use Modules\Core\Services\TenantService;
+use App\Services\TenantContext;
+use App\Services\TenantService;
 
 class TenantTest extends CIUnitTestCase
 {

@@ -75,7 +75,7 @@
 
             <form class="space-y-6" action="<?= base_url('register') ?>" method="POST">
                 <?= csrf_field() ?>
-                
+
                 <!-- Full Name -->
                 <div>
                     <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
@@ -135,9 +135,9 @@
                     <input id="terms" name="terms" type="checkbox" required
                         class="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
                     <label for="terms" class="ml-2 block text-sm text-gray-700">
-                        I agree to the 
+                        I agree to the
                         <a href="#" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">Terms of Service</a>
-                        and 
+                        and
                         <a href="#" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">Privacy Policy</a>
                     </label>
                 </div>
@@ -203,13 +203,13 @@
         document.querySelector('form').addEventListener('submit', function(e) {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('password_confirmation').value;
-            
+
             if (password !== confirmPassword) {
                 e.preventDefault();
                 alert('Password and confirm password do not match!');
                 return false;
             }
-            
+
             if (password.length < 8) {
                 e.preventDefault();
                 alert('Password must be at least 8 characters!');

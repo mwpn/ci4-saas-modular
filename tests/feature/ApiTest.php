@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
-use CodeIgniter\Test\FeatureTestCase;
+use CodeIgniter\Test\FeatureTestTrait;
 use CodeIgniter\Test\DatabaseTestTrait;
+use Tests\Support\TestCase;
 
-class ApiTest extends FeatureTestCase
+class ApiTest extends TestCase
 {
+    use FeatureTestTrait;
     use DatabaseTestTrait;
 
     protected $migrate = true;
@@ -18,8 +20,8 @@ class ApiTest extends FeatureTestCase
     {
         parent::setUp();
 
-        // Seed test data
-        $this->seed('TenantSeeder');
+        // Skip seeding for now - just test API endpoints
+        // $this->seed('Modules\Core\Database\Seeds\TenantSeeder');
     }
 
     public function testHealthEndpoint()
@@ -31,9 +33,14 @@ class ApiTest extends FeatureTestCase
             'success' => true,
             'message' => 'System is healthy'
         ]);
-        $response->assertJSONFragment([
-            'version' => '1.0.0'
-        ]);
+        
+        // Check data structure
+        $json = $response->getJSON();
+        $data = json_decode($json, true);
+        
+        $this->assertArrayHasKey('data', $data);
+        $this->assertArrayHasKey('version', $data['data']);
+        $this->assertEquals('1.0.0', $data['data']['version']);
     }
 
     public function testLoginEndpointWithValidCredentials()

@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use CodeIgniter\Test\CIUnitTestCase;
 use Modules\Auth\Application\Services\AuthService;
 use Modules\Auth\Infrastructure\Repositories\UserRepository;
-use Modules\Core\Services\TenantContext;
+use App\Services\TenantContext;
 
 class AuthTest extends CIUnitTestCase
 {

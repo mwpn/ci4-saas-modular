@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\ApiTest" file="F:\PROJECT\ci4-modular\tests\feature\ApiTest.php" tests="1" assertions="6" errors="0" failures="0" skipped="0" time="0.058858">
+    <testcase name="testHealthEndpoint" file="F:\PROJECT\ci4-modular\tests\feature\ApiTest.php" line="27" class="Tests\Feature\ApiTest" classname="Tests.Feature.ApiTest" assertions="6" time="0.058858"/>
+  </testsuite>
+</testsuites>
